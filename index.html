@@ -319,9 +319,10 @@
         }
 
         function createCardHTML(fileName, cardClass) {
+            const encodedName = encodeURIComponent(fileName);
             return `
-                <div class="img-card ${cardClass}" onclick="openModal('./${fileName}')">
-                    <img src="./${fileName}" alt="${fileName}" onerror="this.outerHTML='<div class=\\'placeholder\\'>이미지 없음<br><small>${fileName}</small></div>'">
+                <div class="img-card ${cardClass}" onclick="openModal('./${encodedName}')">
+                    <img src="./${encodedName}" alt="${fileName}" onerror="this.outerHTML='<div class=\\'placeholder\\'>이미지 없음<br><small>${fileName}</small></div>'">
                     <div class="overlay">
                         <span class="file-name">${fileName}</span>
                         <button class="download-btn" onclick="forceDownload('${fileName}', event)">저장</button>
@@ -366,12 +367,12 @@
             event.preventDefault();
             event.stopPropagation();
 
-            // 제스처 컨텍스트 안에서 즉시 a 태그 준비
+            const encodedName = encodeURIComponent(fileName);
             const a = document.createElement('a');
             a.download = fileName;
             document.body.appendChild(a);
 
-            fetch('./' + fileName)
+            fetch('./' + encodedName)
                 .then(r => {
                     if (!r.ok) throw new Error('fetch 실패');
                     return r.blob();
@@ -385,8 +386,7 @@
                 })
                 .catch(() => {
                     document.body.removeChild(a);
-                    // 최후 수단: 새 탭 + 안내
-                    window.open('./' + fileName, '_blank');
+                    window.open('./' + encodedName, '_blank');
                     alert('열린 이미지에서 길게 눌러 → 이미지 저장을 선택해 주세요.');
                 });
         }
